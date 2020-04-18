@@ -1,0 +1,17 @@
+{
+  "name": "ld46",
+  "version": "1.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ptpham/ld46.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ptpham/ld46/issues"
+  },
+  "homepage": "https://github.com/ptpham/ld46#readme",
+  "dependencies": {
+    "lit-element": "^2.3.1"
+  }
+}
