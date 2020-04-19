@@ -8,5 +8,14 @@
   }
 </style>
 
-<hexa-slime-game></hexa-slime-game>
+<hexa-slime-game id="game" currentPlayer="blue" clientIsPlayer="true"></hexa-slime-game>
+
+<script>
+
+window.addEventListener('load', () => {
+  game.players = ["red", "blue"];
+  game.restart();
+});
+
+</script>
 
