@@ -1,4 +1,5 @@
 
+<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
 <script type="module" src="lib/main.js"></script>
 
 <style>
@@ -14,4 +15,97 @@
 </style>
 
 <hexa-slime-game-manager id="game"></hexa-slime-game-manager>
+
+<script>
+
+let MAX_PLAYERS = 2;
+
+let peer = null;
+let serverConnection = null;
+let clientPeers = [];
+
+window.addEventListener('load', () => {
+  peer = new Peer();
+  peer.on('open', () => {
+    game.peerId = peer.id;
+  });
+
+  peer.on('connection', dataConnection => {
+    if (clientPeers.length >= MAX_PLAYERS - 1) {
+      dataConnection.close();
+      return;
+    }
+
+    dataConnection.on('data', message => {
+      switch (message.command) {
+        case 'tile-click':
+          for (let client of clientPeers) client.send(message);
+          game.handleRemoteTileClick(message.detail);
+          break;
+      }
+    });
+
+    clientPeers.push(dataConnection);
+    game.connectedPeerIds = clientPeers.map(x => x.peer);
+  });
+});
+
+game.addEventListener('server-setup', e => {
+  for (let client of clientPeers) client.close();
+  clientPeers = [];
+  game.connectedPeerIds = clientPeers.map(x => x.peer);
+});
+
+game.addEventListener('server-start', e => {
+  for (let i = 0; i < clientPeers.length; i++) {
+    clientPeers[i].send({ command: 'start', player: game.players[i+1] });
+  }
+  if (serverConnection) serverConnection.close();
+  serverConnection = null;
+});
+
+game.addEventListener('server-connect', e => {
+  clientPeers = [];
+  if (serverConnection) serverConnection.close();
+
+  serverConnection = peer.connect(e.detail.serverId, {reliable: true});
+  let currentServerConnection = serverConnection;
+
+  serverConnection.on('open', () => {
+    if (game.serverId == currentServerConnection.peer) {
+      game.connectedServerId = serverConnection.peer;
+    }
+  });
+
+  serverConnection.on('close', (message) => {
+    if (game.serverId == currentServerConnection.peer) {
+      game.connectedServerId = null;
+    }
+  });
+
+  serverConnection.on('data', (message) => {
+    if (game.serverId == currentServerConnection.peer) { 
+      switch (message.command) {
+        case 'start':
+          game.startAsClient(message.player);
+          break;
+        case 'tile-click':
+          game.handleRemoteTileClick(message.detail);
+          break;
+      }
+    }
+  });
+});
+
+game.addEventListener('tile-click', e => {
+  let message = {
+    command: 'tile-click',
+    detail: e.detail
+  };
+
+  for (let client of clientPeers) client.send(message);
+  if (serverConnection) serverConnection.send(message);
+});
+
+</script>
 
