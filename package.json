@@ -12,7 +12,6 @@
   },
   "homepage": "https://github.com/ptpham/ld46#readme",
   "dependencies": {
-    "lit-element": "^2.3.1",
-    "lit-html": "^3.3.0"
+    "lit-element": "^2.3.1"
   }
 }

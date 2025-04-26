@@ -1,8 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "npm:lit-element@^2.3.1": "2.5.1",
-    "npm:lit-html@^3.3.0": "3.3.0"
+    "npm:lit-element@^2.3.1": "2.5.1"
   },
   "npm": {
     "@types/trusted-types@2.0.7": {
@@ -16,19 +15,12 @@
     },
     "lit-html@1.4.1": {
       "integrity": "sha512-B9btcSgPYb1q4oSOb/PrOT6Z/H+r6xuNzfH4lFli/AWhYwdtrgQkQWBbIc6mdnf6E2IL3gDXdkkqNktpU0OZQA=="
-    },
-    "lit-html@3.3.0": {
-      "integrity": "sha512-RHoswrFAxY2d8Cf2mm4OZ1DgzCoBKUKSPvA1fhtSELxUERq2aQQ2h05pO9j81gS1o7RIRJ+CePLogfyahwmynw==",
-      "dependencies": [
-        "@types/trusted-types"
-      ]
     }
   },
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:lit-element@^2.3.1",
-        "npm:lit-html@^3.3.0"
+        "npm:lit-element@^2.3.1"
       ]
     }
   }
