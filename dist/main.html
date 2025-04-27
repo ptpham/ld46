@@ -1,6 +1,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
-<script type="module" src="lib/main.js"></script>
+<script src="lib/main.js"></script>
 
 <style>
   body {
@@ -25,6 +25,25 @@ let serverConnection = null;
 let clientPeers = [];
 
 window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const embed = params.get('embed');
+  if (embed) {
+    game.startNetworkGame();
+    game.startAsClient(embed);
+
+    window.addEventListener('message', (e) => {
+      game.handleRemoteTileClick(e.data);
+    });
+
+    if (window.parent !== window) {
+      game.addEventListener('tile-click', e => {
+        window.parent.postMessage(e.detail, "*");
+      });
+    }
+
+    return;
+  }
+
   peer = new Peer();
   peer.on('open', () => {
     game.peerId = peer.id;
