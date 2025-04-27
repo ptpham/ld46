@@ -2093,9 +2093,14 @@ var HexaSlimeGame = class extends LitElement {
     }
     return result;
   }
+  get hexData() {
+    const { hexGrid } = this;
+    return hexGrid.validHexCoords.map(
+      (coord) => this.elementDataMap.get(hexGrid.coordToId(coord))
+    );
+  }
   checkGameOver() {
-    let { hexGrid } = this;
-    let hexData = hexGrid.validHexCoords.map((coord) => this.elementDataMap.get(hexGrid.coordToId(coord)));
+    let { hexData } = this;
     for (let data of hexData) if (!data.player) return false;
     let uniquePlayers = new Set(hexData.map((x) => x.player).filter((player) => player != "dead"));
     if (uniquePlayers.size > 1) return false;
@@ -2136,11 +2141,15 @@ var HexaSlimeGame = class extends LitElement {
     let winners = this.checkGameOver();
     if (winners) {
       this.dispatchEvent(new CustomEvent("game-over", { detail: { winners } }));
+      return;
     }
     this.dispatchEvent(new CustomEvent(
       "next-turn",
       { detail: { currentPlayer: this.players[this.currentPlayerIndex] } }
     ));
+    if (!this.getClickableEdgeIdsForCurrentPlayer().length && this.hexData.every((data) => data.player)) {
+      this.nextTurn();
+    }
   }
   getClickableEdgeIds() {
     if (!this.clientIsPlayer) return [];
