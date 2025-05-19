@@ -2184,8 +2184,8 @@ var HexaSlimeGame = class extends LitElement {
     let { id, tileType } = detail;
     let data = this.elementDataMap.get(id);
     let clickableEdges = this.getClickableEdgeIdsForCurrentPlayer();
-    if (tileType == "edge" && !new Set(clickableEdges).has(detail.id)) return;
-    if (tileType == "hex" && (data.player || this.currentPlayerData.usingEdge)) return;
+    if (tileType == "edge" && !new Set(clickableEdges).has(detail.id)) return false;
+    if (tileType == "hex" && (data.player || this.currentPlayerData.usingEdge)) return false;
     data.player = this.currentPlayer;
     data.claimTurn = this.turn;
     if (detail.tileType == "hex") {
@@ -2199,6 +2199,7 @@ var HexaSlimeGame = class extends LitElement {
       }
     }
     this.requestUpdate();
+    return true;
   }
   incrementComponentHealth(id) {
     let { hexGrid } = this;
@@ -2519,7 +2520,12 @@ var HexaSlimeGameManager = class extends LitElement {
     this.showModal = "network-server";
   }
   handleRemoteTileClick(detail) {
-    this.game.processTileClick(detail);
+    const success = this.game.processTileClick(detail);
+    this.dispatchEvent(new CustomEvent("tile-click-resolve", { detail: {
+      tile: detail,
+      success,
+      winners: this.game.checkGameOver()
+    }, bubbles: true, composed: true }));
   }
   renderIntro() {
     return html`

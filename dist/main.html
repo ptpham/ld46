@@ -39,6 +39,10 @@ window.addEventListener('load', () => {
       game.addEventListener('tile-click', e => {
         window.parent.postMessage(e.detail, "*");
       });
+
+      game.addEventListener('tile-click-resolve', e => {
+        window.parent.postMessage({messageType: 'resolve', ...e.detail}, "*");
+      });
     }
 
     return;
